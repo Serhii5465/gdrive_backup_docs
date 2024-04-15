@@ -3,9 +3,9 @@ import argparse
 import datetime
 import os
 from pathlib import Path
-from py_exec_cmd import exec_cmd
 from typing import Dict
-import rclone_const
+import src.const as rclone_const
+from src import proc
 
 
 def create_dir(dir: str) -> None:
@@ -41,8 +41,8 @@ def upload_to_gdrive() -> None:
     args = parse_args()
     
     #: Converting Unix-like path to Windows form by using Cygpath.exe utility.
-    win_style_path_sync_dir = exec_cmd.get_cmd_out(['cygpath', '--windows', rclone_const.DOCS_DIR()])
-    win_style_path_logs_dir = exec_cmd.get_cmd_out(['cygpath', '--windows', rclone_const.LOGS_DIR()])
+    win_style_path_sync_dir = proc.get_cmd_out(['cygpath', '--windows', rclone_const.DOCS_DIR()])
+    win_style_path_logs_dir = proc.get_cmd_out(['cygpath', '--windows', rclone_const.LOGS_DIR()])
 
     command = ['rclone', 'sync', '--progress', '--verbose',
                 '--log-file=' + win_style_path_logs_dir.stdout.strip('\n') + datetime.datetime.now().strftime("%Y-%m-%d_%H\uA789%M\uA789%S") + '.log']
@@ -62,7 +62,7 @@ def upload_to_gdrive() -> None:
 
     if args['download']:
         #: Checking for the presence of the remote root folder with documents on Google Drive
-        is_rem_dir_empty = exec_cmd.get_cmd_out(['rclone', 'lsf', rclone_const.ROOT_REMOTE_DIR()])
+        is_rem_dir_empty = proc.get_cmd_out(['rclone', 'lsf', rclone_const.ROOT_REMOTE_DIR()])
         if not is_rem_dir_empty.stdout:
             raise FileNotFoundError('Source directory on Google Drive is empty')
 
@@ -75,7 +75,7 @@ def upload_to_gdrive() -> None:
 
     create_dir(rclone_const.LOGS_DIR())
 
-    out = exec_cmd.run_cmd(command)
+    out = proc.run_cmd(command)
     if out.returncode != 0:
         raise RuntimeError('Error\nCheck logs')
     else:
