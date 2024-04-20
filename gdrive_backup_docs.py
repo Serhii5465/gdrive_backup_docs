@@ -7,18 +7,6 @@ import rclone_const
 from pathlib import Path
 from typing import Dict 
 
-def RCLONE_CONF_FILE() -> str:
-    return str(Path.home()) + '/.config/rclone/rclone.conf'
-
-def DOCS_DIR() -> str:
-    return '/cygdrive/d/documents'
-
-def ROOT_REMOTE_DIR() -> str:
-    return 'google-drive:'
-
-def LOGS_DIR() -> str:
-    return '/cygdrive/d/logs/rclone/'
-
 def create_dir(dir: str) -> None:
     Path(dir).mkdir(parents=True, exist_ok=True)
 
