@@ -2,15 +2,25 @@ import sys
 import argparse
 import datetime
 import os
+import subprocess
+import rclone_const
 from pathlib import Path
-from typing import Dict
-import src.const as rclone_const
-from src import proc
+from typing import Dict 
 
+def RCLONE_CONF_FILE() -> str:
+    return str(Path.home()) + '/.config/rclone/rclone.conf'
+
+def DOCS_DIR() -> str:
+    return '/cygdrive/d/documents'
+
+def ROOT_REMOTE_DIR() -> str:
+    return 'google-drive:'
+
+def LOGS_DIR() -> str:
+    return '/cygdrive/d/logs/rclone/'
 
 def create_dir(dir: str) -> None:
     Path(dir).mkdir(parents=True, exist_ok=True)
-
 
 def parse_args() -> Dict[str, bool]:
     """
@@ -41,8 +51,8 @@ def upload_to_gdrive() -> None:
     args = parse_args()
     
     #: Converting Unix-like path to Windows form by using Cygpath.exe utility.
-    win_style_path_sync_dir = proc.get_cmd_out(['cygpath', '--windows', rclone_const.DOCS_DIR()])
-    win_style_path_logs_dir = proc.get_cmd_out(['cygpath', '--windows', rclone_const.LOGS_DIR()])
+    win_style_path_sync_dir = subprocess.run(['cygpath', '--windows', rclone_const.DOCS_DIR()], capture_output=True, text=True)
+    win_style_path_logs_dir = subprocess.run(['cygpath', '--windows', rclone_const.LOGS_DIR()], capture_output=True, text=True)
 
     command = ['rclone', 'sync', '--progress', '--verbose',
                 '--log-file=' + win_style_path_logs_dir.stdout.strip('\n') + datetime.datetime.now().strftime("%Y-%m-%d_%H\uA789%M\uA789%S") + '.log']
@@ -62,7 +72,7 @@ def upload_to_gdrive() -> None:
 
     if args['download']:
         #: Checking for the presence of the remote root folder with documents on Google Drive
-        is_rem_dir_empty = proc.get_cmd_out(['rclone', 'lsf', rclone_const.ROOT_REMOTE_DIR()])
+        is_rem_dir_empty = subprocess.run(['rclone', 'lsf', rclone_const.ROOT_REMOTE_DIR()], capture_output=True, text=True)
         if not is_rem_dir_empty.stdout:
             raise FileNotFoundError('Source directory on Google Drive is empty')
 
@@ -75,7 +85,7 @@ def upload_to_gdrive() -> None:
 
     create_dir(rclone_const.LOGS_DIR())
 
-    out = proc.run_cmd(command)
+    out = subprocess.run(command, stderr=sys.stderr, stdout=sys.stdout)
     if out.returncode != 0:
         raise RuntimeError('Error\nCheck logs')
     else:
