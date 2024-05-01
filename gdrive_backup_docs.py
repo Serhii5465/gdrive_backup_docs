@@ -30,17 +30,20 @@ def parse_args() -> Dict[str, bool]:
     return args
 
 
-def upload_to_gdrive() -> None:
+def upload_to_gdrive(logs_dir: str, docs_dir: str) -> None:
     """
     Checking all paths for validity and uploading files from local folder to Google Drive.
     Under normal conditions the process finishes work and has an exit code of 0.
     Otherwise, the process has an exit code different from 0 and the script terminates.
+    Args:
+        logs_dir (str): The path to the directory where log files will be saved.
+        docs_dir (str): The path to the local folder containing documents.
     """
     args = parse_args()
     
     #: Converting Unix-like path to Windows form by using Cygpath.exe utility.
-    win_style_path_sync_dir = subprocess.run(['cygpath', '--windows', rclone_const.DOCS_DIR()], capture_output=True, text=True)
-    win_style_path_logs_dir = subprocess.run(['cygpath', '--windows', rclone_const.LOGS_DIR()], capture_output=True, text=True)
+    win_style_path_sync_dir = subprocess.run(['cygpath', '--windows', docs_dir], capture_output=True, text=True)
+    win_style_path_logs_dir = subprocess.run(['cygpath', '--windows', logs_dir], capture_output=True, text=True)
 
     command = ['rclone', 'sync', '--progress', '--verbose',
                 '--log-file=' + win_style_path_logs_dir.stdout.strip('\n') + datetime.datetime.now().strftime("%Y-%m-%d_%H\uA789%M\uA789%S") + '.log']
@@ -48,12 +51,12 @@ def upload_to_gdrive() -> None:
     if args['upload']:
         #: Checking for the presence of the local root folder with documents
         try:
-            dirs = os.listdir(rclone_const.DOCS_DIR())
+            dirs = os.listdir(docs_dir)
         except FileNotFoundError:
-            sys.exit('Directory ' + rclone_const.DOCS_DIR() + ' is missing')
+            sys.exit('Directory ' + docs_dir + ' is missing')
         else:
             if len(dirs) == 0:
-                raise IndexError('Directory ' + rclone_const.DOCS_DIR() + ' is empty')
+                raise IndexError('Directory ' + docs_dir + ' is empty')
 
         command.insert(4, win_style_path_sync_dir.stdout.strip('\n'))
         command.insert(5, rclone_const.ROOT_REMOTE_DIR())
@@ -64,14 +67,14 @@ def upload_to_gdrive() -> None:
         if not is_rem_dir_empty.stdout:
             raise FileNotFoundError('Source directory on Google Drive is empty')
 
-        if not os.path.exists(rclone_const.DOCS_DIR()):
-            create_dir(rclone_const.DOCS_DIR())
-            print('Creating directory ' + rclone_const.DOCS_DIR())
+        if not os.path.exists(docs_dir):
+            create_dir(docs_dir)
+            print('Creating directory ' + docs_dir)
 
         command.insert(4, rclone_const.ROOT_REMOTE_DIR())
         command.insert(5, win_style_path_sync_dir.stdout.strip('\n'))
 
-    create_dir(rclone_const.LOGS_DIR())
+    create_dir(logs_dir)
 
     out = subprocess.run(command, stderr=sys.stderr, stdout=sys.stdout)
     if out.returncode != 0:
@@ -83,7 +86,9 @@ def upload_to_gdrive() -> None:
 def main() -> None:
     if not os.path.exists(rclone_const.RCLONE_CONF_FILE()):
         raise FileNotFoundError('Rclone\'s config file is missing')
+    
+    mnt = rclone_const.MOUNT_POINTS()
 
-    upload_to_gdrive()
+    upload_to_gdrive(mnt.get('logs'), mnt.get('docs'))
 
 main()
