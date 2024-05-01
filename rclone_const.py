@@ -6,15 +6,15 @@ from cyg_mnt_point import mnt
 def DELL_INFO() -> dict[str, str]:
     return {
         'uuid' : '345837F85837B806',
-        'docs' : '/cygdrive/d/documents',
-        'logs' : '/cygdrive/d/logs'
+        'docs' : '/cygdrive/d/documents/',
+        'logs' : '/cygdrive/d/logs/'
     }
 
 def MSI_INFO() -> dict[str, str]:
     return {
         'uuid' : 'F0A297AFA2977934',
-        'docs' : '/cygdrive/e/documents',
-        'logs' : '/cygdrive/e/logs'
+        'docs' : '/cygdrive/e/documents/',
+        'logs' : '/cygdrive/e/logs/'
     }
 
 def MOUNT_POINTS() -> dict[str, str]:
