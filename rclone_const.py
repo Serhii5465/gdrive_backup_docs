@@ -12,7 +12,7 @@ def DELL_INFO() -> dict[str, str]:
 
 def MSI_INFO() -> dict[str, str]:
     return {
-        'uuid' : 'F0A297AFA2977934',
+        'uuid' : '347E0E947E0E4F54',
         'docs' : '/cygdrive/e/documents/',
         'logs' : '/cygdrive/e/logs/'
     }
