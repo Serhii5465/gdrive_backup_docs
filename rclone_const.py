@@ -1,34 +1,25 @@
-import os
 import sys
 from pathlib import Path
 from cyg_mnt_point import mnt 
 
-def DELL_INFO() -> dict[str, str]:
-    return {
-        'uuid' : '345837F85837B806',
-        'docs' : '/cygdrive/d/documents/',
-        'logs' : '/cygdrive/d/logs/'
-    }
+def UUID_DELL_HDD() -> str:
+    return '345837F85837B806'
 
-def MSI_INFO() -> dict[str, str]:
-    return {
-        'uuid' : '347E0E947E0E4F54',
-        'docs' : '/cygdrive/e/documents/',
-        'logs' : '/cygdrive/e/logs/'
-    }
+def UUID_MSI_HDD() -> str:
+    return '347E0E947E0E4F54'
 
-def MOUNT_POINTS() -> dict[str, str]:
+def MOUNT_POINTS() -> str:
     uuid_src = [
-        DELL_INFO(),
-        MSI_INFO()
+        UUID_DELL_HDD(),
+        UUID_MSI_HDD()
     ]
     
     mnt_point = ''
     
     for i in uuid_src:
-        mnt_point = mnt.get_cygwin_mount_point(i.get('uuid'))
+        mnt_point = mnt.get_cygwin_mount_point(i)
         if mnt_point is not None:
-            return i
+            return mnt_point
     
     if mnt_point is None:
         sys.exit('Source HDD did not mount')

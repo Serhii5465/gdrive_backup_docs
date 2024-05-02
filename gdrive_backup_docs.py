@@ -89,6 +89,6 @@ def main() -> None:
     
     mnt = rclone_const.MOUNT_POINTS()
 
-    upload_to_gdrive(mnt.get('logs'), mnt.get('docs'))
+    upload_to_gdrive(mnt + 'logs/rclone_gdrive_documents/', mnt + 'documents/')
 
 main()
