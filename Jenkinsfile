@@ -54,7 +54,7 @@ pipeline{
             }
             steps {
                 unstash 'src'
-                bat returnStatus: true, script: 'Robocopy.exe . D:\\system\\applications\\cygwin64\\home\\raisnet\\scripts\\gdrive_backup_docs'
+                bat returnStatus: true, script: 'Robocopy.exe /copyall . D:\\system\\applications\\cygwin64\\home\\raisnet\\scripts\\gdrive_backup_docs'
             }
         }
     }
