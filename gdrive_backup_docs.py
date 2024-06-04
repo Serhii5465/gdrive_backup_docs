@@ -19,8 +19,8 @@ def parse_args() -> Dict[str, bool]:
     parser = argparse.ArgumentParser(description='Selecting the operating mode of the rclone utility')
 
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-u', '--upload', action='store_true', help='Uploads files from the local directory "documents" to Google Drive')
-    group.add_argument('-d', '--download', action='store_true', help='Downloads files from Google Drive (directory "docs") to the local directory "documents"')
+    group.add_argument('-u', '--upload', action='store_true', help='Uploads files')
+    group.add_argument('-d', '--download', action='store_true', help='Downloads files')
 
     args = vars(parser.parse_args())
 
@@ -89,6 +89,6 @@ def main() -> None:
     
     mnt = rclone_const.MOUNT_POINTS()
 
-    upload_to_gdrive(mnt + 'logs/rclone_gdrive_documents/', mnt + 'documents/')
+    upload_to_gdrive(mnt + 'logs/rclone_gdrive_documents/', mnt + rclone_const.ROOT_LOCAL_DIR())
 
 main()

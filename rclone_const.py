@@ -29,3 +29,6 @@ def RCLONE_CONF_FILE() -> str:
 
 def ROOT_REMOTE_DIR() -> str:
     return 'google-drive:'
+
+def ROOT_LOCAL_DIR() -> str:
+    return 'gdrive_share'
