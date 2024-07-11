@@ -2,8 +2,9 @@
 
 node('master') {
     def config = [
-        git_repo_url : "gdrive_backup_docs_repo:Serhii5465/gdrive_backup_docs.git",
+        git_repo_url : "git@github.com:Serhii5465/gdrive_backup_docs.git",
         git_branch : "main",
+        git_cred_id : "gdrive_backup_docs_repo_cred",
         stash_includes : "**/*.py",
         stash_excludes : "",
         command_deploy : "robocopy /E . D:\\system\\scripts\\gdrive_backup_docs",
