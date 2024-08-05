@@ -5,7 +5,7 @@ UUID_DELL_HDD = '5837B806'
 
 UUID_MSI_HDD = '7E0E4F54'
 
-ROOT_REMOTE_DIR = 'google-drive:'
+ROOT_REMOTE_DIR = 'gdrive:'
 
 NAME_SYNC_DIR = 'gdrive_share'
 

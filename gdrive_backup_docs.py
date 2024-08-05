@@ -10,6 +10,14 @@ from src import constants
 def create_dir(dir: str) -> None:
     Path(dir).mkdir(parents=True, exist_ok=True)
 
+def mode_label_op(message: str, path_log_file: str) -> None:
+    message = message + '\n'
+    print(message)
+
+    f = open(path_log_file, 'a')
+    f.write(message)
+    f.close()
+
 def parse_args() -> Dict[str, bool]:
     """
     Handles command-line options to select the script's mode.
@@ -29,7 +37,6 @@ def parse_args() -> Dict[str, bool]:
     
     return args
 
-
 def upload_to_gdrive() -> None:
     """
     Checking all paths for validity and uploading files from local folder to Google Drive.
@@ -38,8 +45,9 @@ def upload_to_gdrive() -> None:
     """
     args = parse_args()
     
-    command = ['rclone', 'sync', '--progress', '--verbose', '--config=' + constants.RCLONE_CONF_FILE,
-                '--log-file=' + constants.RCLONE_LOGS_DIR + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log']
+    log_file = os.path.join(constants.RCLONE_LOGS_DIR, datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + '.log')
+
+    command = ['rclone', 'sync', '--dry-run', '--progress', '--verbose', '--config=' + constants.RCLONE_CONF_FILE, '--log-file=' + log_file]
     
     if args['upload']:
         #: Checking for the presence of the local root folder with documents
@@ -69,8 +77,16 @@ def upload_to_gdrive() -> None:
 
     create_dir(constants.RCLONE_LOGS_DIR)
 
-    out = subprocess.run(command, stderr=sys.stderr, stdout=sys.stdout)
-    if out.returncode != 0:
+    mode_label_op('Running Rclone in dry run mode', log_file)
+
+    if subprocess.run(command, stderr=sys.stderr, stdout=sys.stdout).returncode != 0:
+        raise RuntimeError('Error\nCheck logs')
+
+    command.remove('--dry-run')
+
+    mode_label_op('\nUploading mode', log_file)
+
+    if subprocess.run(command, stderr=sys.stderr, stdout=sys.stdout).returncode != 0:
         raise RuntimeError('Error\nCheck logs')
     else:
         print('\nSuccess')
@@ -82,4 +98,5 @@ def main() -> None:
     
     upload_to_gdrive()
 
-main()
+if __name__ == "__main__":
+    main()
