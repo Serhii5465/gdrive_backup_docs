@@ -2,6 +2,7 @@
 
 node('master') {
     def config = [
+        platform: "win32",
         git_repo_url : "git@github.com:Serhii5465/gdrive_backup_docs.git",
         git_branch : "main",
         git_cred_id : "gdrive_backup_docs_repo_cred",
@@ -11,5 +12,5 @@ node('master') {
         func_deploy : ""
     ]
 
-    DeployArtifactsPipelineWinAgents(config)
+    DeployArtifactsPipelineOnAgents(config)
 }
