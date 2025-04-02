@@ -1,7 +1,7 @@
 import os
 from src import mnt
 
-UUID_SRC_DRIVE = 'CC0570C4'
+UUID_SRC_DRIVE = 'E46F39A2'
 
 ROOT_REMOTE_DIR = 'gdrive:'
 
